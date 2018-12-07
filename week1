@@ -1,2 +1,95 @@
-1. vim的使用, 修改master上面的bug issue-101
-这边对dev分支进行操作
+1. vim的使用
+    vim有三种模式，底命令模式，命令模式和插入模式。vim刚进入是底命令模式，此时键
+盘敲击的动作会被认为是命令，而非输入字符。
+  
+  u表示复原前一个动作。ctrl+r表示重做上一个动作。.表示重复前一个动作。
+  输入: 进入底命令模式， 输入i进入插入命令模式
+
+  底命令模式: :w表示保存，:q退出，:q!强制退出不保存, :ZZ文档未动过则不离开，否则储存离开。:set nu,显示行号，set nonu 不限行号。
+
+移动光标到第几行:
+  gg: 移动到第一行
+  nG：移动到文档第n行
+
+粘贴(p): p粘贴在下一行，P粘贴在上一行
+
+删除(d):
+   x: 删除当前光标所处位置的字符。
+   nx: 连续删除光标之后的n个字符。
+   dd: 删除当前行
+   ndd: 删除光标处在行向下n行。
+   d1G: 删除光标所在行到第一行的所有数据, dG: 删除光标所在行到最后一行的所有数据。
+   d$: 删除光标所在字符到最后一个字符, d0: 删除光标所在字符到这行第一个字符。
+复制(y):
+   yy: 复制这一行数据
+   y1G: 复制所处行到第一行数据, yG: 复制所处行到最后一行数据
+   y0: 复制所处字符到第一个字符, y$: 复制到行尾。
+
+
+
+ 2.giti
+    分布式版本控制系统，每个电脑上都有一个完整的版本库，通常有一台电脑临时充当“中央服务器”。git支持https和ssh协议，但是shh协议速度更快。
+  工作区: 电脑里面的那个目录，比如这里是learning
+  版本库：工作区中隐藏的.git就是版本库
+  暂存区：在.git文件中，称为stage
+
+git init: 初始化一个仓库哦
+   
+git status: 查看工作区状态   
+添加文件到仓库,分两步:
+    git add <file>: 添加文件到暂存区
+    git commit -m <message>：提交文件，一次性把暂存区的所有修改提交到分区。
+  
+  gir rm: 用于删除一个文件
+  git diff <commid-id> --  <file>: 查看工作区和版本库中commid-id(最新版本)区别  
+
+git log: 显示commit日志，一直到HEAD。
+   git log --graph --pretty=oneline --abbrev-commit
+   
+
+git 回退版本
+   HEAD: 当前版本，HEAD^: 上一版本，HEAD^^: 上上个版本，可以使用HEAD~2。
+   git reset --hard HEAD^ 回退到上一版本。
+   git reflog: 查看命令历史，来回到未来版本
+ 
+git branch: 创建分支
+   本地新建的分支如果不推送到远程，对其他人就是不可见的.
+   git branch -d dev: 删除dev分支
+
+git nerge: 合并分支
+   git merge dev: 合并dev分支到当前分支，fast-forward模式合并。
+   git merge --no-ff -m "xxxxx" dev: 禁止使用fast-forward模式合并，git会在merge时生成一个新的commit，这样，在分支的历史上就可以看出分支信息。
+
+git checkout: 切换分支
+   git checkout -b dev: 创建并切换到分支dev，相等于下面两条分支
+      git branch dev 创建分支dev
+      git checkout dev 切换到分支dev
+
+分支策略：master分支应该是稳定的，而dev分支是不稳定的，一般都在dev上面干活。对于新bug, 在那个分支上面修改就checkout出一个新的临时issue-100分支。
+git stash: 保存工作区现场，然后修改bug
+git stash list: 列出所有保存点
+git stash pop: 恢复现场，并删除保存点
+git stash apply: 恢复现场，但不删除保存点
+git stash drop: 删除保存点
+
+
+git remote add origin git@xxxxx.git：本地关联远程库,以后远程库的名字就是origin
+ git push -u origin master: 把本地库的内容推送到远程master，首次添加要加上参数-u，git会把本地master分支和远程master分支关联起来。
+ git clone git@xxxx.git: 克隆一个远程git
+
+git remote -v: 查看远程库信息
+
+git push origin <branch-name>: 从本地推送分支，如果推送失败，先用git pull抓取远程的新提交；
+git checkout -b <branch-name> <origin/branch-name>: 在本地创建和远程分支对应的分支，本地和远程分支的名称最好一致；
+git branch --set-upstream branch-name origin/branch-name: 建立本地分支和远程分支的关联
+
+从远程抓取分支，使用git pull，如果有冲突，要先处理冲突。
+
+git tag: 标签管理,就是用tag表示commit号，也就是一个指向commit的指针
+   git tag <tagname> <commitid> 新建一个标签，默认为HEAD
+   git tag -a <tagname> -m "xxx" <commitid> 指定标签信息
+   git tag 查看所有标签
+   git tag -d v1.0 删除标签
+   git push origin v1.0 推送标签到远程， --tags 一次性推送所有标签
+   git push origin :refs/tags/v1.0 删除远程标签
+  
